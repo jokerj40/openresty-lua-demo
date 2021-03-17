@@ -1,0 +1,17 @@
+services:
+    server:
+        build: .
+        restart: on-failure
+        ports: 
+            - "80:8080"
+
+    db:
+        image: postgres
+        restart: on-failure
+        hostname: db.org
+        environment:
+            POSTGRES_PASSWORD: mypostgre
+            POSTGRES_USER: lua_user
+            POSTGRES_DB: luadb
+        volumes:
+            - ./db:/var/lib/postgresql/data
