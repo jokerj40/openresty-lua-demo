@@ -14,4 +14,7 @@ services:
             POSTGRES_USER: lua_user
             POSTGRES_DB: luadb
         volumes:
-            - ./db:/var/lib/postgresql/data
+            - db-data:/var/lib/postgresql/data
+
+volumes: 
+    db-data:
