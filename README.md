@@ -1,2 +1,1 @@
 ### openresty-lua-demo
-test
