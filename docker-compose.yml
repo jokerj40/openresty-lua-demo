@@ -8,7 +8,6 @@ services:
     db:
         image: postgres
         restart: on-failure
-        hostname: db.org
         environment:
             POSTGRES_PASSWORD: mypostgre
             POSTGRES_USER: lua_user
