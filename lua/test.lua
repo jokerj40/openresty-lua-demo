@@ -29,7 +29,7 @@ return ngx.print[[
     </head>
     
     <body>
-    <h1>Hello, World!</h1>
+    <h1>Hello, Worldf!</h1>
     <button onclick="upd()">Click me</button>
     <div id="demo">data</div>
     </body>
