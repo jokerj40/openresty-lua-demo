@@ -1,0 +1,22 @@
+- name: Deploying the app to the "slave" server
+    hosts: remote
+        remote_user: ec2-user
+        become: yes
+        tasks:
+            - name: Copy needed files
+            copy:
+                src: /var/lib/jenkins/workspace/openresty-lua-demo
+                dest: /home/ec2-user
+                owner: ec2-user
+                group: ec2-user
+                mode: 0755
+
+            - name: Remove images & docker stuff
+            command: bash /home/ec2-user/openresty-lua-demo/remove_image.sh
+            ignore_errors: yes
+
+            - name: Load delivered image
+            command: dockerload --input /home/ec2-user/openresty-lua-demo/openresty-lua-demo_server.tar.gz
+           
+            - name: Start service
+            command: docker-compose -f /home/ec2-user/openresty-lua-demo/docker-compose.yml up -d

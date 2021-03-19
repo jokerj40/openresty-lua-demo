@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Pull') {
+            steps {
+                echo '> Pulling repo....';
+                git url: 'https://github.com/jokerj40/openresty-lua-demo/', branch: "main";
+            }
+        }
+        stage('Build') {
+            steps {
+                echo '> Building....';
+                sh 'docker-compose build --no-cache';
+                sh 'docker-compose up -d';
+            }
+        }
+        stage('Test') {
+            steps {
+                echo '> Testing....';
+                script {
+                    HTTP_STATUS = sh(
+                        script: 'curl -s -o /dev/null -I -w "%{http_code}" --max-time 10 127.0.0.1/api | grep -v %',
+                        returnStdout: true
+                    ).trim();
+                    echo "> HTTP returned ${HTTP_STATUS}";
+                    
+                    if (HTTP_STATUS != "200") {
+                        currentBuild.result = "FAILURE"
+                        throw new Exception("Wrong HTTP code! Test failed")
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo '> Deploying....';
+                sh 'docker save openresty-lua-demo_server | gzip > openresty-lua-demo_server.tar.gz' // maybe should be in build section
+                sh "ansible-playbook ~/cicd/ansible/site.yml -i ~/cicd/ansible/hosts.yml";
+            }
+        }
+    }
+    post {
+        always {
+            echo '> Destroying....';
+            sh 'docker stop $(docker ps -aq)';
+            sh 'docker rm $(docker ps -aq)';
+            sh 'docker system prune --force'; // --filter 'until=2h'
+            sh 'docker volume prune --force';
+        }
+    }
+}

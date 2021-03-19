@@ -1,5 +1,1 @@
-db/
-Jenkinsfile
-hosts.yml
-site.yml
 *.tar.gz
