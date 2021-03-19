@@ -1,6 +1,7 @@
 services:
     server:
         build: .
+        image: openresty-lua-demo_server
         restart: on-failure
         ports: 
             - "80:8080"
